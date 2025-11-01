@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fun Quiz Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #74ebd5, #ACB6E5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .quiz-box {
+      background: white;
+      padding: 20px 40px;
+      border-radius: 12px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+      width: 350px;
+      text-align: center;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin-top: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-box">
+    <h2 id="question">Loading...</h2>
+    <div id="answers"></div>
+    <button onclick="nextQuestion()">Next</button>
+    <p id="score"></p>
+  </div>
+
+  <script>
+    const quiz = [
+      { q: "What language runs in a web browser?", options: ["Java", "C", "Python", "JavaScript"], answer: 3 },
+      { q: "What does CSS stand for?", options: ["Creative Style System", "Cascading Style Sheets", "Colorful Style Syntax", "None"], answer: 1 },
+      { q: "What year was JavaScript created?", options: ["1995", "2005", "1989", "1999"], answer: 0 },
+    ];
+
+    let current = 0;
+    let score = 0;
+
+    const question = document.getElementById("question");
+    const answers = document.getElementById("answers");
+    const scoreText = document.getElementById("score");
+
+    function loadQuestion() {
+      const q = quiz[current];
+      question.textContent = q.q;
+      answers.innerHTML = "";
+      q.options.forEach((opt, i) => {
+        const btn = document.createElement("button");
+        btn.textContent = opt;
+        btn.onclick = () => checkAnswer(i);
+        answers.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(i) {
+      if (i === quiz[current].answer) {
+        score++;
+      }
+      nextQuestion();
+    }
+
+    function nextQuestion() {
+      current++;
+      if (current < quiz.length) {
+        loadQuestion();
+      } else {
+        question.textContent = "Quiz Over!";
+        answers.innerHTML = "";
+        scoreText.textContent = `You scored ${score} / ${quiz.length}`;
+      }
+    }
+
+    loadQuestion();
+  </script>
+</body>
+</html>
+
