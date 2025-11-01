@@ -3,78 +3,135 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fun Quiz Game</title>
+  <title>Ultimate Fun Quiz 🎉</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(to right, #74ebd5, #ACB6E5);
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #ff9966, #ff5e62);
+      color: #fff;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
       height: 100vh;
+      margin: 0;
     }
-    .quiz-box {
-      background: white;
-      padding: 20px 40px;
-      border-radius: 12px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-      width: 350px;
+    .quiz-container {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 30px 40px;
+      width: 90%;
+      max-width: 420px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      backdrop-filter: blur(10px);
       text-align: center;
+      animation: fadeIn 1s ease;
     }
-    button {
-      background-color: #4CAF50;
+    h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+    .question {
+      font-size: 20px;
+      margin: 20px 0;
+    }
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .options button {
+      background: #fff;
+      color: #333;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+    .options button:hover {
+      background: #2196F3;
       color: white;
+      transform: scale(1.05);
+    }
+    .next-btn {
+      margin-top: 20px;
+      background: #222;
+      color: #fff;
       border: none;
       padding: 10px 20px;
-      margin-top: 10px;
       border-radius: 6px;
       cursor: pointer;
+      transition: background 0.3s ease;
     }
-    button:hover {
-      background-color: #45a049;
+    .next-btn:hover {
+      background: #4CAF50;
+    }
+    .score {
+      font-size: 22px;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 <body>
-  <div class="quiz-box">
-    <h2 id="question">Loading...</h2>
-    <div id="answers"></div>
-    <button onclick="nextQuestion()">Next</button>
-    <p id="score"></p>
+  <div class="quiz-container">
+    <h1>🎯 Ultimate Fun Quiz</h1>
+    <div class="question" id="question">Loading question...</div>
+    <div class="options" id="options"></div>
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next ➡️</button>
+    <div class="score" id="score"></div>
   </div>
 
   <script>
     const quiz = [
-      { q: "What language runs in a web browser?", options: ["Java", "C", "Python", "JavaScript"], answer: 3 },
-      { q: "What does CSS stand for?", options: ["Creative Style System", "Cascading Style Sheets", "Colorful Style Syntax", "None"], answer: 1 },
-      { q: "What year was JavaScript created?", options: ["1995", "2005", "1989", "1999"], answer: 0 },
+      { q: "Which animal is known as the King of the Jungle?", options: ["Tiger", "Elephant", "Lion", "Gorilla"], answer: 2 },
+      { q: "What is the capital city of France?", options: ["Rome", "Paris", "Madrid", "Berlin"], answer: 1 },
+      { q: "Which fruit is known to keep the doctor away?", options: ["Banana", "Mango", "Apple", "Grapes"], answer: 2 },
+      { q: "Who painted the Mona Lisa?", options: ["Vincent van Gogh", "Pablo Picasso", "Leonardo da Vinci", "Michelangelo"], answer: 2 },
+      { q: "Which planet is closest to the Sun?", options: ["Mercury", "Venus", "Earth", "Mars"], answer: 0 },
+      { q: "What color do you get when you mix red and yellow?", options: ["Purple", "Orange", "Pink", "Green"], answer: 1 },
+      { q: "In which sport is the term 'love' used?", options: ["Cricket", "Tennis", "Football", "Basketball"], answer: 1 },
+      { q: "Which ocean is the largest?", options: ["Atlantic", "Indian", "Pacific", "Arctic"], answer: 2 },
+      { q: "How many days are there in a leap year?", options: ["365", "366", "364", "367"], answer: 1 },
+      { q: "What type of animal is a Komodo dragon?", options: ["Snake", "Lizard", "Crocodile", "Turtle"], answer: 1 }
     ];
 
     let current = 0;
     let score = 0;
-
-    const question = document.getElementById("question");
-    const answers = document.getElementById("answers");
-    const scoreText = document.getElementById("score");
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const scoreEl = document.getElementById("score");
+    const nextBtn = document.getElementById("next-btn");
 
     function loadQuestion() {
       const q = quiz[current];
-      question.textContent = q.q;
-      answers.innerHTML = "";
+      questionEl.textContent = q.q;
+      optionsEl.innerHTML = "";
       q.options.forEach((opt, i) => {
         const btn = document.createElement("button");
         btn.textContent = opt;
-        btn.onclick = () => checkAnswer(i);
-        answers.appendChild(btn);
+        btn.onclick = () => checkAnswer(i, btn);
+        optionsEl.appendChild(btn);
       });
+      scoreEl.textContent = "";
+      nextBtn.style.display = "none";
     }
 
-    function checkAnswer(i) {
-      if (i === quiz[current].answer) {
+    function checkAnswer(i, btn) {
+      const correct = quiz[current].answer;
+      if (i === correct) {
+        btn.style.backgroundColor = "#4CAF50";
         score++;
+      } else {
+        btn.style.backgroundColor = "#e74c3c";
       }
-      nextQuestion();
+      Array.from(optionsEl.children).forEach(b => b.disabled = true);
+      nextBtn.style.display = "inline-block";
     }
 
     function nextQuestion() {
@@ -82,14 +139,28 @@
       if (current < quiz.length) {
         loadQuestion();
       } else {
-        question.textContent = "Quiz Over!";
-        answers.innerHTML = "";
-        scoreText.textContent = `You scored ${score} / ${quiz.length}`;
+        showScore();
       }
+    }
+
+    function showScore() {
+      questionEl.textContent = "🎉 Quiz Complete!";
+      optionsEl.innerHTML = "";
+      scoreEl.textContent = `You scored ${score} / ${quiz.length}`;
+      nextBtn.textContent = "Play Again 🔁";
+      nextBtn.onclick = restartQuiz;
+      nextBtn.style.display = "inline-block";
+    }
+
+    function restartQuiz() {
+      current = 0;
+      score = 0;
+      nextBtn.textContent = "Next ➡️";
+      nextBtn.onclick = nextQuestion;
+      loadQuestion();
     }
 
     loadQuestion();
   </script>
 </body>
 </html>
-
